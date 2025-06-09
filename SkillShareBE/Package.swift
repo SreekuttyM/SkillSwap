@@ -6,6 +6,9 @@ let package = Package(
     platforms: [
        .macOS(.v13)
     ],
+    products: [
+           .executable(name: "SkillShareBE", targets: ["SkillShareBE"]),
+       ],
     dependencies: [
         // 💧 A server-side Swift web framework.
         .package(url: "https://github.com/vapor/vapor.git", from: "4.115.0"),
