@@ -15,14 +15,22 @@ public func configure(_ app: Application) async throws {
     }
 
     await app.jwt.keys.add(hmac: HMACKey(from: jwtSecret), digestAlgorithm: .sha256)
-    app.databases.use(DatabaseConfigurationFactory.postgres(configuration: .init(
-        hostname: Environment.get("DATABASE_HOST") ?? "localhost",
-        port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? SQLPostgresConfiguration.ianaPortNumber,
-        username: Environment.get("DATABASE_USERNAME") ?? "vapor_username",
-        password: Environment.get("DATABASE_PASSWORD") ?? "vapor_password",
-        database: Environment.get("DATABASE_NAME") ?? "vapor_database",
-        tls: .prefer(try .init(configuration: .clientDefault)))
-    ), as: .psql)
+    
+    if let databaseURL = Environment.get("DATABASE_URL"),
+       let config = SQLPostgresConfiguration(url: databaseURL) {
+        app.logger.info("Using DATABASE_URL for DB connection")
+        app.databases.use(.postgres(configuration: config), as: .psql)
+    } else {
+        app.logger.info("Using individual env vars for DB connection")
+        app.databases.use(DatabaseConfigurationFactory.postgres(configuration: .init(
+            hostname: Environment.get("DATABASE_HOST") ?? "localhost",
+            port: Environment.get("DATABASE_PORT").flatMap(Int.init) ?? SQLPostgresConfiguration.ianaPortNumber,
+            username: Environment.get("DATABASE_USERNAME") ?? "vapor_username",
+            password: Environment.get("DATABASE_PASSWORD") ?? "vapor_password",
+            database: Environment.get("DATABASE_NAME") ?? "vapor_database",
+            tls: .prefer(try .init(configuration: .clientDefault))
+        )), as: .psql)
+    }
 
     app.migrations.add(CreateUser())
     app.migrations.add(CreateRefreshToken())
