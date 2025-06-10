@@ -15,9 +15,8 @@ public func configure(_ app: Application) async throws {
     }
 
     await app.jwt.keys.add(hmac: HMACKey(from: jwtSecret), digestAlgorithm: .sha256)
-    
-    if let databaseURL = Environment.get("DATABASE_URL"),
-       let config = SQLPostgresConfiguration(url: databaseURL) {
+    if let databaseURL = Environment.get("DATABASE_URL") {
+        let config = try SQLPostgresConfiguration(url: databaseURL)
         app.logger.info("Using DATABASE_URL for DB connection")
         app.databases.use(.postgres(configuration: config), as: .psql)
     } else {
