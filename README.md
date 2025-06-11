@@ -42,10 +42,14 @@ The server runs by default on http://localhost:8080
 The backend is deployed on Render.com. The service automatically builds and deploys on git pushes.
 http://0.0.0.0:8085
 
-#API Documentation
+# API Documentation
 
-POST /auth/signup
+POST /auth/signup 
+
 POST /auth/signin
+
 POST /auth/refresh
+
 GET /profile
+
 PUT /profile
