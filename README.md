@@ -31,10 +31,15 @@ Scalable API: Designed to extend with new modules and services.
 # Running Locally
 
 git clone https://github.com/SreekuttyM/SkillSwap.git
+
 cd SkillShareBE
+
 Configure your database connection in configure.swift or via environment variables.
+
 vapor run migrate
+
 vapor run serve
+
 The server runs by default on http://localhost:8080
 
 # Deployment
